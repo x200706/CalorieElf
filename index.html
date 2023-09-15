@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>卡路里精靈</title>
+</head>
+
+<body>
+
+  <input type="file" id="fileInput">
+  <pre id="output"></pre>
+  <hr>
+  <h1>卡路里精靈v1.0.0</h1>
+  <h2>目前有的功能</h2>
+  1. 讓你知道每天總共吃多少，不用自己計算總合，單品熱量用+號連接即可<br>
+  2. 讓你知道開始紀錄以來平均每天吃多少大卡<br>
+  非...非常寒酸QQ
+
+  <hr>
+  <h2>使用步驟</h2>
+  1. 準備一份格式如下的csv檔案，名稱隨意<br>
+  <pre>
+日期, 熱量
+20230821, 500+550+150+160+150+160
+20230822, 565+264+199+100+400+500
+20230823, 560+399+450+12+280+123+10+65
+</pre>
+  2. 點擊上傳檔案後送出<br>
+  3. 每次上傳便會根據最新的csv檔案內容做顯示<br>
+  <script>
+    document.getElementById('fileInput').addEventListener('change', (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader(); //讀檔
+        reader.readAsText(file); //csv轉文字
+        reader.onload = (e) => { //異步
+          const csv = e.target.result; //取得csv文字內容
+          var lines = csv.split('\n');
+          var arrForAverage = [];
+          lines.shift(); //去掉第一行
+          var result = '日期 熱量';
+          lines.forEach(function (e) {
+            var line = e.split(',');
+            var date = line[0];
+            var kcalSum = eval(line[1]);
+            arrForAverage.push(kcalSum);
+            result += '\n' + date + ' ' + kcalSum
+          });
+          var sum = arrForAverage.reduce((previous, current) => current += previous);
+          var avg = sum / arrForAverage.length;
+
+          //Alert重點訊息
+          var todayData = lines[lines.length - 1].split(',');
+          var todayKcalSum = eval(todayData[1])
+          alert('平均熱量：' + avg + '；今日已吃：' + todayKcalSum + '大卡')
+
+          document.getElementById('output').textContent = result; //用於在頁面上顯示文字
+        };
+
+      }
+    });
+  </script>
+</body>
+
+</html>
